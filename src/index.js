@@ -1,10 +1,9 @@
-
 import F2 from '@antv/f2';
 
 function wrapEvent(e) {
   if (!e) return;
   if (!e.preventDefault) {
-    e.preventDefault = function() {};
+    e.preventDefault = function () {};
   }
   return e;
 }
@@ -35,18 +34,28 @@ Component({
         size: true
       })
       .exec(res => {
-        const { node, width, height } = res[0];
+        const {
+          node,
+          width,
+          height
+        } = res[0];
         const context = node.getContext('2d');
         const pixelRatio = wx.getSystemInfoSync().pixelRatio;
         // 高清设置
         node.width = width * pixelRatio;
         node.height = height * pixelRatio;
 
-        const config = { context, width, height, pixelRatio };
+        const config = {
+          context,
+          width,
+          height,
+          pixelRatio
+        };
         const chart = this.data.onInit(F2, config);
         if (chart) {
           this.chart = chart;
           this.canvasEl = chart.get('el');
+          this.triggerEvent('on-chart-ready-event', {})
         }
       });
   },
@@ -75,6 +84,12 @@ Component({
         return;
       }
       canvasEl.dispatchEvent('touchend', wrapEvent(e));
-    }
+    },
+    /**
+     * 图表数据更新（前后数据结构不发生变化），需要马上更新图表。
+     */
+    changeData(data) {
+      this.chart.changeData(data);
+    },
   }
 });
